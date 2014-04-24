@@ -61,7 +61,11 @@ public class Tree {
 			
 			myNode = new Node(temp.title(),ele.attr("href"));
 			if(checkList.contains(myNode)){
-				link.paths.add(checkList.get(checkList.indexOf(myNode)));
+				if(link != myNode){
+					if(!link.paths.contains(myNode)){
+						link.paths.add(checkList.get(checkList.indexOf(myNode)));
+					}
+				}
 			}
 			else{
 				checkList.add(myNode); 
