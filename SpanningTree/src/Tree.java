@@ -1,6 +1,8 @@
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
+import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element; 
@@ -11,7 +13,8 @@ public class Tree {
 	Node root;
 	int count; 
 	ArrayList<Node> checkList = new ArrayList<Node>();
-	
+	String linkBase = "http://en.wikipedia.org";
+	String http = "http:";
 	public Tree(){
 		count = 0;
 	}
@@ -25,22 +28,18 @@ public class Tree {
 	}
 	
 	public void makeTree() throws IOException{
-		while(count <=100){
-		count =count + makeTree(root);
-		}
+		 makeTree(root);
 	}//end public makeTree
 	
-	private int makeTree(Node n) throws IOException{
-		int count  =0;
+	private void makeTree(Node n) throws IOException{
 		for(Node link:n.paths){
 			if(link.isleaf()){
-				count = makeLeaf(link);
+				count = count + makeLeaf(link);
 			}//end if
 			else{
-				 count =count + makeTree(link);
+				 makeTree(link);
 			}// end else
 		}//end for
-		return count;
 	}// end recursive check
 	
 	private int makeLeaf(Node link) throws IOException{
@@ -55,25 +54,39 @@ public class Tree {
 		e = doc.select("a[href]");
 		
 		for(Element ele: e){
-			temp = Jsoup.connect(ele.attr("href")).get();
 			
 			//need to check if they are wiki pages or not
 			
-			myNode = new Node(temp.title(),ele.attr("href"));
-			if(checkList.contains(myNode)){
-				if(link != myNode){
-					if(!link.paths.contains(myNode)){
-						link.paths.add(checkList.get(checkList.indexOf(myNode)));
+			try{
+				if(!e.attr("href").startsWith("#") || !(e.attr("href").compareTo("en.wikipedia.orghttp") == 0)){
+					if(!e.attr("href").contains("en.")){
+						
+						temp = Jsoup.connect(linkBase+e.attr("href")).get(); 
+						myNode = new Node(temp.title(),linkBase+e.attr("href"));
+						link.paths.add(link);
+					}
+					else{
+						if(!e.attr("href").startsWith(http)){
+							temp = Jsoup.connect(http+e.attr("href")).get(); 
+							myNode = new Node(temp.title(),http+e.attr("href"));
+							link.paths.add(link);
+						}
+						else{
+							temp = Jsoup.connect(e.attr("href")).get(); 
+							myNode = new Node(temp.title(),e.attr("href"));
+							link.paths.add(link);
+						}
+							
 					}
 				}
+				
+			}catch(HttpStatusException err){
+				System.out.println("dead link found");
+			}catch(UnknownHostException err2){
+				break;
 			}
-			else{
-				checkList.add(myNode); 
-				link.paths.add(myNode);
-				count++;
-			}
-		}//end for
+				System.out.println("number of links: "+ link.paths.size());
+			}//end for
 		return count;
 	}
-	
 }

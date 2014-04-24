@@ -1,3 +1,5 @@
+import java.io.IOException;
+
 /***************
  * 
  * @author jamie
@@ -5,9 +7,22 @@
  */
 public class Test {
 
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+	public static void main(String[] args) throws IOException {
+		buildTreeTest();
 
+		
+		
+	}// end main
+
+	
+	public static void buildTreeTest() throws IOException{
+		JsoupReading jsoupR = new JsoupReading();
+		
+		jsoupR.readInRoots();
+		System.out.println("finished");
+		
 	}
-
-}
+	
+	
+	
+}//end class
