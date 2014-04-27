@@ -21,7 +21,7 @@ public class JsoupReading {
 	public void readInRoots() throws IOException{
 		Document doc,temp;
 		String rootUrl = "";
-		String title;
+		String title,webSite;
 		File myFile = new File("Tree.txt");
 		String linkBase = "http://en.wikipedia.org";
 		String http = "http:";
@@ -53,13 +53,19 @@ public class JsoupReading {
 					else{
 						if(!e.attr("href").startsWith(http)){
 							temp = Jsoup.connect(http+e.attr("href")).get(); 
-							link = new Node(temp.title(),http+e.attr("href"));
-							n.paths.add(link);
+							webSite = urlTrimming(http+e.attr("href"))[1];
+							if(webSite == "wikipedia"){
+								link = new Node(temp.title(),http+e.attr("href"));
+								n.paths.add(link);
+							}
 						}
 						else{
 							temp = Jsoup.connect(e.attr("href")).get(); 
-							link = new Node(temp.title(),e.attr("href"));
-							n.paths.add(link);
+							webSite = urlTrimming(e.attr("href"))[1];
+							if(webSite == "wikipedia"){
+								link = new Node(temp.title(),e.attr("href"));
+								n.paths.add(link);
+							}
 						}
 							
 					}
@@ -81,5 +87,8 @@ public class JsoupReading {
 			}
 			
 		}//end while	
+	}
+	private String[] urlTrimming(String url){
+		return url.split("[.]+");
 	}
 }

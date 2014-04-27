@@ -47,6 +47,7 @@ public class Tree {
 		int count = 0;
 		Elements e;
 		Node myNode;
+		String webSite;
 		//connect ot the page 
 		doc = Jsoup.connect(link.url).get();
 		
@@ -58,23 +59,29 @@ public class Tree {
 			//need to check if they are wiki pages or not
 			
 			try{
-				if(!e.attr("href").startsWith("#") || !(e.attr("href").compareTo("en.wikipedia.orghttp") == 0)){
+				if(!ele.attr("href").startsWith("#") || !(e.attr("href").compareTo("en.wikipedia.orghttp") == 0)){
 					if(!e.attr("href").contains("en.")){
 						
 						temp = Jsoup.connect(linkBase+e.attr("href")).get(); 
 						myNode = new Node(temp.title(),linkBase+e.attr("href"));
-						link.paths.add(link);
+						link.paths.add(myNode);
 					}
 					else{
-						if(!e.attr("href").startsWith(http)){
+						if(!ele.attr("href").startsWith(http)){
 							temp = Jsoup.connect(http+e.attr("href")).get(); 
-							myNode = new Node(temp.title(),http+e.attr("href"));
-							link.paths.add(link);
+							webSite = urlTrimming(http+e.attr("href"))[1];
+							if(webSite == "wikipedia"){
+								myNode = new Node(temp.title(),http+e.attr("href"));
+								link.paths.add(myNode);
+							}
 						}
 						else{
 							temp = Jsoup.connect(e.attr("href")).get(); 
-							myNode = new Node(temp.title(),e.attr("href"));
-							link.paths.add(link);
+							webSite = urlTrimming(e.attr("href"))[1];
+							if(webSite == "wikipedia"){
+								myNode = new Node(temp.title(),e.attr("href"));
+								link.paths.add(myNode);
+							}
 						}
 							
 					}
@@ -88,5 +95,8 @@ public class Tree {
 				System.out.println("number of links: "+ link.paths.size());
 			}//end for
 		return count;
+	}
+	private String[] urlTrimming(String url){
+		return url.split("[.]+");
 	}
 }
