@@ -45,7 +45,6 @@ public class JsoupReading {
 			try{
 				if(!e.attr("href").startsWith("#") || !(e.attr("href").compareTo("en.wikipedia.orghttp") == 0)){
 					if(!e.attr("href").contains("en.")){
-						
 						temp = Jsoup.connect(linkBase+e.attr("href")).get(); 
 						link = new Node(temp.title(),linkBase+e.attr("href"));
 						n.paths.add(link);

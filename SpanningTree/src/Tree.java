@@ -33,18 +33,17 @@ public class Tree {
 	
 	private void makeTree(Node n) throws IOException{
 		for(Node link:n.paths){
-			if(link.isleaf()){
-				count = count + makeLeaf(link);
+			if(link.isleaf() && !(count >=1000)){
+				makeLeaf(link);
 			}//end if
-			else{
-				 makeTree(link);
-			}// end else
+			else {
+				break;
+			}
 		}//end for
 	}// end recursive check
 	
-	private int makeLeaf(Node link) throws IOException{
+	private void makeLeaf(Node link) throws IOException{
 		Document doc,temp;
-		int count = 0;
 		Elements e;
 		Node myNode;
 		String webSite;
@@ -55,48 +54,75 @@ public class Tree {
 		e = doc.select("a[href]");
 		
 		for(Element ele: e){
-			
-			//need to check if they are wiki pages or not
-			
 			try{
 				if(!ele.attr("href").startsWith("#") || !(e.attr("href").compareTo("en.wikipedia.orghttp") == 0)){
 					if(!e.attr("href").contains("en.")){
-						
 						temp = Jsoup.connect(linkBase+e.attr("href")).get(); 
 						myNode = new Node(temp.title(),linkBase+e.attr("href"));
-						link.paths.add(myNode);
+						if(!checkForValue(myNode)){
+							checkList.add(myNode);
+							link.paths.add(myNode);
+							count++;
+						}
+						else{
+							link.paths.add(checkList.get(checkList.indexOf(myNode)));
+							System.out.println("found a copy");
+						}
 					}
-					else{
-						if(!ele.attr("href").startsWith(http)){
+					else if(!ele.attr("href").startsWith(http)){
 							temp = Jsoup.connect(http+e.attr("href")).get(); 
 							webSite = urlTrimming(http+e.attr("href"))[1];
 							if(webSite == "wikipedia"){
 								myNode = new Node(temp.title(),http+e.attr("href"));
-								link.paths.add(myNode);
+								if(!checkForValue(myNode)){
+									checkList.add(myNode);
+									link.paths.add(myNode);
+									count++;
+								}
+								else{
+									link.paths.add(checkList.get(checkList.indexOf(myNode)));
+									System.out.println("found a copy");
+								}
 							}
 						}
-						else{
+					else{
 							temp = Jsoup.connect(e.attr("href")).get(); 
 							webSite = urlTrimming(e.attr("href"))[1];
 							if(webSite == "wikipedia"){
 								myNode = new Node(temp.title(),e.attr("href"));
-								link.paths.add(myNode);
+								if(!checkForValue(myNode)){
+									checkList.add(myNode);
+									link.paths.add(myNode);
+									count++;
+								}
+								else{
+									link.paths.add(checkList.get(checkList.indexOf(myNode)));
+									System.out.println("found a copy");
+								}
 							}
 						}
-							
-					}
-				}
-				
+				}// end entry if
 			}catch(HttpStatusException err){
 				System.out.println("dead link found");
 			}catch(UnknownHostException err2){
 				break;
 			}
-				System.out.println("number of links: "+ link.paths.size());
+				System.out.println("number of pages: "+count);
+				if(count >=1000){
+					break;
+				}
 			}//end for
-		return count;
 	}
 	private String[] urlTrimming(String url){
 		return url.split("[.]+");
 	}
+	
+	private boolean checkForValue(Node myNode){
+		if(checkList.contains(myNode)){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}//end checkForValue
 }
