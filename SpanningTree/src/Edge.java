@@ -6,10 +6,10 @@ public class Edge {
 	Node source,target;
 	boolean visited; 
 	
-	public Edge(Node source,Node target){
-		weight =rand.nextInt(1000)+1;
+	public Edge(Node source,Node target,int weight){
 		this.source = source; 
 		this.target = target;
+		this.weight = weight;
 	}//end pubilc constructor
 	
 	public boolean visitedEdge(){
@@ -22,6 +22,9 @@ public class Edge {
 	
 	public Node getTarget(){
 		return target;
+	}
+	public int getWeight(){
+		return weight;
 	}
 	
 	public boolean visitedNodes(Node source,Node target){
