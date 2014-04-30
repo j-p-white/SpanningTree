@@ -22,6 +22,7 @@ public class Tree {
 		// this needs to add the root links to its list
 		root = n;
 		count = root.paths.size();
+		checkList.add(root);
 		for(Node m: root.paths){
 			checkList.add(m);
 		}

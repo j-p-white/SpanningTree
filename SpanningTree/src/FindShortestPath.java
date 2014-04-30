@@ -29,7 +29,7 @@ public class FindShortestPath{
 		 while(temp.Title!=destination){
 			 for(Entry<Node,Integer>e:graph.getEdges(temp).entrySet()){
 				 
-				 // if your not visited add it to the list
+				 // if your not visited add it to open edges
 					if(unvisitedNodes.contains(e.getKey())){
 						openEdges.add(new Edge(temp,e.getKey(),(Integer) e.getValue()));
 					}
@@ -38,7 +38,7 @@ public class FindShortestPath{
 			 //get the smallest edge
 			 smallestEdge = openEdges.poll(); 
 		
-			 //while its not in the list, its been visited get a new one
+			 //while its not in the list, its been visited, get a new one
 			 while(unvisitedNodes.contains(smallestEdge.getTarget())){
 				 smallestEdge = openEdges.poll();
 			 }

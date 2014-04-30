@@ -18,6 +18,7 @@ public class JsoupReading {
 	
 	Scanner scan;
 	ArrayList<Tree> checkList = new ArrayList<Tree>();
+	Tree aTree;
 	public void readInRoots() throws IOException{
 		Document doc,temp;
 		String rootUrl = "";
@@ -27,7 +28,6 @@ public class JsoupReading {
 		String http = "http:";
 		scan = new Scanner(myFile); 
 		Node n,link;
-		Tree aTree;
 		Elements ele;
 		
 		while(scan.hasNext()){
