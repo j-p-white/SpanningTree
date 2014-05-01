@@ -15,79 +15,156 @@ import org.jsoup.nodes.*;
 import org.jsoup.select.*;
 public class JsoupReading {
 
-	
-	Scanner scan;
-	ArrayList<Tree> checkList = new ArrayList<Tree>();
-	Tree aTree;
-	public void readInRoots() throws IOException{
-		Document doc,temp;
-		String rootUrl = "";
-		String title,webSite;
-		File myFile = new File("Tree.txt");
-		String linkBase = "http://en.wikipedia.org";
-		String http = "http:";
-		scan = new Scanner(myFile); 
-		Node n,link;
-		Elements ele;
 		
-		while(scan.hasNext()){
+		Node root;
+		ArrayList<Node> checkList = new ArrayList<Node>();
+		Document tempDoc = null;
+		Graph g;
+	
+	
+	
+	private Node readInRoots() throws IOException{
+		Document doc;
+		File myFile = new File("Tree.txt");
+		Scanner scan = new Scanner(myFile);
+		String rootUrl = "";
+		String title;
+		
+		///while(scan.hasNext()){
 			//scanner reads in a new rootUrl
 			rootUrl = scan.nextLine();
-			doc = Jsoup.connect(rootUrl).get();
+			doc = Jsoup.connect(rootUrl).timeout(0).get();
 			title = doc.title();
-			n = new Node(title,rootUrl);
+			root = new Node(title,rootUrl);
+			checkList.add(root);
+			scan.close();
+			return root;
+		//}//end while	
+	}//end method		
 			
-			//get all the links
-			ele = doc.select("a[href]");
+		private void growTree(Node node) throws IOException{
+			Graph g = new Graph(); 
+			Elements ele;
+			System.out.println("growing tree");
+			Node myNode,temp = null;
+			tempDoc = Jsoup.connect(node.url).timeout(0).get();
+			 ele = tempDoc.select("a[href]");
 			for(Element e:ele){
-				//System.out.println("link: "+ e.attr("href"));
-				//System.out.println(" ");
-			try{
-				if(!e.attr("href").startsWith("#") || !(e.attr("href").compareTo("en.wikipedia.orghttp") == 0)){
-					if(!e.attr("href").contains("en.")){
-						temp = Jsoup.connect(linkBase+e.attr("href")).get(); 
-						link = new Node(temp.title(),linkBase+e.attr("href"));
-						n.paths.add(link);
+			try{	
+				// your not in the list add to list
+				if(!(correctUrl(e)== null)){
+					tempDoc = Jsoup.connect(correctUrl(e)).timeout(0).get();
+					myNode = new Node(tempDoc.title(),correctUrl(e));
+					if(!scanList(myNode)){
+						checkList.add(myNode);
+						node.paths.add(myNode);
+						g.addEdges(node, myNode);
+						System.out.println("current Nodes in tree"+checkList.size());
+						System.out.println("nodes title: "+myNode.Title);
+						
 					}
-					else{
-						if(!e.attr("href").startsWith(http)){
-							temp = Jsoup.connect(http+e.attr("href")).get(); 
-							webSite = urlTrimming(http+e.attr("href"))[1];
-							if(webSite == "wikipedia"){
-								link = new Node(temp.title(),http+e.attr("href"));
-								n.paths.add(link);
+					// your in the list but not in my links
+					else if( scanList(myNode) && !node.paths.contains(myNode)){
+						for(int i=0;i< checkList.size();i++){
+							if(checkList.get(i) == myNode){
+								temp = checkList.get(i);
 							}
 						}
-						else{
-							temp = Jsoup.connect(e.attr("href")).get(); 
-							webSite = urlTrimming(e.attr("href"))[1];
-							if(webSite == "wikipedia"){
-								link = new Node(temp.title(),e.attr("href"));
-								n.paths.add(link);
-							}
-						}
-							
+						g.addEdges(node, temp);
+						node.paths.add(myNode);
 					}
-				}
-				
-			}catch(HttpStatusException err){
+				}// end if
+			}//end try
+			catch(HttpStatusException err){
+				tempDoc = null;
 				System.out.println("dead link found");
+				
 			}catch(UnknownHostException err2){
-				break;
+				tempDoc = null;
+				System.out.println("badHost");
 			}
-				System.out.println("number of links: "+ n.paths.size());
-			}//end for
+			}//end for	
+		}// end method
 			
-			aTree= new Tree(n);
-			aTree.makeTree();
-			checkList.add(aTree);
-			if(aTree.checkList.size()>=1000){
-				break;
-			}
-			
-		}//end while	
-	}
+	
 	private String[] urlTrimming(String url){
 		return url.split("[.]+");
 	}
-}
+	
+	public void makeTree() throws IOException{
+		Node root = readInRoots();
+		makeTree(root);
+	}//end public makeTree
+	
+	private void makeTree(Node n) throws IOException{
+		int count = 0;
+		while(checkList.size() <1000){
+			System.out.println("inside while");
+			if(n.isleaf()){
+				growTree(n);
+				System.out.println(checkList.size());
+			}
+			else if(!n.isleaf() && checkList.size()<1000){
+					growTree(n.paths.get(count));
+					count++;
+				
+			}
+		}//end while
+	}// end recursive check
+	
+	private String correctUrl(Element e) throws IOException{
+		tempDoc = new Document("");
+		String linkBase = "http://en.wikipedia.org";
+		String http = "http:";
+		String website;
+		String Url = null;
+		//try{
+			if(!e.attr("href").startsWith("#") || !(e.attr("href").compareTo("en.wikipedia.orghttp") == 0)){
+				if(!e.attr("href").contains("en.")){
+					//tempDoc = Jsoup.connect(linkBase+e.attr("href")).timeout(0).get();
+					Url = linkBase+e.attr("href");
+				}
+				else if(!e.attr("href").startsWith(http)){
+						//tempDoc = Jsoup.connect(http+e.attr("href")).timeout(0).get(); 
+						Url = http+e.attr("href");
+						website = urlTrimming(Url)[1];
+						if(!website.equals("wikipedia")){
+							Url = null;
+						}
+				}
+				else{
+						//tempDoc = Jsoup.connect(e.attr("href")).timeout(0).get(); 
+						Url =e.attr("href");
+						website = urlTrimming(Url)[1];
+						if(!website.equals("wikipedia")){
+							Url = null;
+						}
+				}
+			}//end entry if
+			/*
+		}//end try
+		catch(HttpStatusException err){
+			tempDoc = null;
+			System.out.println("dead link found");
+			
+		}catch(UnknownHostException err2){
+			tempDoc = null;
+			System.out.println("badHost");
+		}
+	*/
+			return Url;
+	}//end method
+	
+	private boolean scanList(Node node){
+		for(Node c:checkList){
+			if(c.Title.equals(node.Title)){
+				return true;
+			}
+		}
+		return false;
+	}
+	public Graph getGraph(){
+		return g;
+	}
+}		
+
