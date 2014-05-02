@@ -19,10 +19,7 @@ public class JsoupReading {
 		Node root;
 		ArrayList<Node> checkList = new ArrayList<Node>();
 		Document tempDoc = null;
-		Graph g;
-	
-	
-	
+		
 	private Node readInRoots() throws IOException{
 		Document doc;
 		File myFile = new File("Tree.txt");
@@ -30,8 +27,6 @@ public class JsoupReading {
 		String rootUrl = "";
 		String title;
 		
-		///while(scan.hasNext()){
-			//scanner reads in a new rootUrl
 			rootUrl = scan.nextLine();
 			doc = Jsoup.connect(rootUrl).timeout(0).get();
 			title = doc.title();
@@ -39,11 +34,9 @@ public class JsoupReading {
 			checkList.add(root);
 			scan.close();
 			return root;
-		//}//end while	
 	}//end method		
 			
 		private void growTree(Node node) throws IOException{
-			Graph g = new Graph(); 
 			Elements ele;
 			System.out.println("growing tree");
 			Node myNode,temp = null;
@@ -58,7 +51,6 @@ public class JsoupReading {
 					if(!scanList(myNode)){
 						checkList.add(myNode);
 						node.paths.add(myNode);
-						g.addEdges(node, myNode);
 						System.out.println("current Nodes in tree"+checkList.size());
 						System.out.println("nodes title: "+myNode.Title);
 						
@@ -70,8 +62,7 @@ public class JsoupReading {
 								temp = checkList.get(i);
 							}
 						}
-						g.addEdges(node, temp);
-						node.paths.add(myNode);
+						node.paths.add(temp);
 					}
 				}// end if
 			}//end try
@@ -91,41 +82,50 @@ public class JsoupReading {
 		return url.split("[.]+");
 	}
 	
-	public void makeTree() throws IOException{
-		Node root = readInRoots();
-		makeTree(root);
+	public void makeTree() throws IOException, InterruptedException{
+		makeTree(readInRoots());
 	}//end public makeTree
 	
-	private void makeTree(Node n) throws IOException{
+	private void makeTree(Node n) throws IOException, InterruptedException{
 		int count = 0;
 		while(checkList.size() <1000){
 			System.out.println("inside while");
 			if(n.isleaf()){
+				if(n == root){
+					System.out.println("im root");
+				}
 				growTree(n);
 				System.out.println(checkList.size());
 			}
 			else if(!n.isleaf() && checkList.size()<1000){
-					growTree(n.paths.get(count));
-					count++;
-				
+					try {
+						
+						System.out.println(n.paths.get(count).Title);
+						System.out.println(n.paths.get(count).url);
+						System.out.println(count);
+						growTree(n.paths.get(count));
+						count++;
+					}
+					catch(NullPointerException e){
+						// his name was ...bob
+						System.out.println("killing Node");
+						n.paths.remove(count);
+						Thread.sleep(5000);
+					}	
 			}
 		}//end while
 	}// end recursive check
 	
 	private String correctUrl(Element e) throws IOException{
-		tempDoc = new Document("");
 		String linkBase = "http://en.wikipedia.org";
 		String http = "http:";
 		String website;
 		String Url = null;
-		//try{
-			if(!e.attr("href").startsWith("#") || !(e.attr("href").compareTo("en.wikipedia.orghttp") == 0)){
+			if(!e.attr("href").contains("#") && !(e.attr("href").compareTo("en.wikipedia.orghttp") == 0)){
 				if(!e.attr("href").contains("en.")){
-					//tempDoc = Jsoup.connect(linkBase+e.attr("href")).timeout(0).get();
 					Url = linkBase+e.attr("href");
 				}
-				else if(!e.attr("href").startsWith(http)){
-						//tempDoc = Jsoup.connect(http+e.attr("href")).timeout(0).get(); 
+				else if(!e.attr("href").startsWith(http)){ 
 						Url = http+e.attr("href");
 						website = urlTrimming(Url)[1];
 						if(!website.equals("wikipedia")){
@@ -133,7 +133,6 @@ public class JsoupReading {
 						}
 				}
 				else{
-						//tempDoc = Jsoup.connect(e.attr("href")).timeout(0).get(); 
 						Url =e.attr("href");
 						website = urlTrimming(Url)[1];
 						if(!website.equals("wikipedia")){
@@ -141,17 +140,6 @@ public class JsoupReading {
 						}
 				}
 			}//end entry if
-			/*
-		}//end try
-		catch(HttpStatusException err){
-			tempDoc = null;
-			System.out.println("dead link found");
-			
-		}catch(UnknownHostException err2){
-			tempDoc = null;
-			System.out.println("badHost");
-		}
-	*/
 			return Url;
 	}//end method
 	
@@ -162,9 +150,6 @@ public class JsoupReading {
 			}
 		}
 		return false;
-	}
-	public Graph getGraph(){
-		return g;
 	}
 }		
 

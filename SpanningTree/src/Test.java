@@ -8,15 +8,19 @@ import java.util.Map.Entry;
  */
 public class Test {
 
-	public static void main(String[] args) throws IOException {
-		buildGraphTest(); //test reviled lots of copies// need to fix this
+	public static void main(String[] args) throws IOException, InterruptedException {
+		buildGraphTest(); //removed copys got to fix the graph!
 	}// end main
 	
-	public static void buildGraphTest() throws IOException{
+	public static void buildGraphTest() throws IOException, InterruptedException{
 		JsoupReading jsoupR = new JsoupReading();
+		Graph g = new Graph();
 		jsoupR.makeTree();
 		int count = 0;
-			for(Entry<Node,Integer> e: jsoupR.g.getEdges(jsoupR.root).entrySet()){
+		for(Node n: jsoupR.root.paths){
+			g.addEdges(jsoupR.root, n);
+		}
+			for(Entry<Node,Integer> e: g.getEdges(jsoupR.root).entrySet()){
 				System.out.println(" destination: "+e.getKey().Title);
 				System.out.println(count);
 				count++;
