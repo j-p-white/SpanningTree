@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.util.ArrayList;
 
 /***************
  * 
@@ -8,20 +9,35 @@ import java.io.IOException;
 public class Test {
 
 	public static void main(String[] args) throws IOException, InterruptedException {
-		writeToFileTest();
+		//testCollectPoints(); to make this work again make makepoints public
+		//testCollectEdges();
+		testFindShortestPath();
 	}// end main
-	
-
-	public static void writeToFileTest() throws IOException{
+	/* to make this work again make makepoints public
+	public static void testCollectPoints() throws IOException{
 		makeGraph make = new makeGraph();
-		int count = 0;
-		for(Edge e :make.makeEdges(make.collectingPoints())){
-			System.out.println(e.toString());
-			count++;
-		}
-		System.out.println("total edges: "+count);
+		ArrayList<Point> madePoints;
+		madePoints =make.makePoint();
 		
-		System.out.println("finished makeGraph");
-	}
+		for(int i =0; i <10;i++){
+			System.out.println(madePoints.get(i).title);
+		}
+		System.out.println("totale points: "+madePoints.size());
 	
+	}
+	*/
+	/*
+	public static void testCollectEdges() throws IOException{
+		makeGraph make = new makeGraph();
+		ArrayList<Edge> madeEdges;
+		madeEdges =make.makeEdges();
+		System.out.println("total edges: "+ madeEdges.size());
+	}
+	*/
+	public static void testFindShortestPath() throws IOException{
+		makeGraph make = new makeGraph();
+		ArrayList<Edge> madeEdges;
+		madeEdges = make.Start("Anime", "Manga");
+		System.out.println("total edges: "+ madeEdges.size());
+	}
 }//end class

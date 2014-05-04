@@ -12,6 +12,13 @@ public class Edge {
 		this.weight = weight;
 	}
 	
+	public Point getSource(){
+		return source2;
+	}
+	public Point getTarget(){
+		return target2;
+	}
+	
 	public boolean visitedEdge(){
 		return visited;
 	}
