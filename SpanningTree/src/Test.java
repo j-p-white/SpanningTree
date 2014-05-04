@@ -1,5 +1,4 @@
 import java.io.IOException;
-import java.util.Map.Entry;
 
 /***************
  * 
@@ -9,22 +8,20 @@ import java.util.Map.Entry;
 public class Test {
 
 	public static void main(String[] args) throws IOException, InterruptedException {
-		buildGraphTest(); //removed copys got to fix the graph!
+		writeToFileTest();
 	}// end main
 	
-	public static void buildGraphTest() throws IOException, InterruptedException{
-		JsoupReading jsoupR = new JsoupReading();
-		Graph g = new Graph();
-		jsoupR.makeTree();
+
+	public static void writeToFileTest() throws IOException{
+		makeGraph make = new makeGraph();
 		int count = 0;
-		for(Node n: jsoupR.root.paths){
-			g.addEdges(jsoupR.root, n);
+		for(Edge e :make.makeEdges(make.collectingPoints())){
+			System.out.println(e.toString());
+			count++;
 		}
-			for(Entry<Node,Integer> e: g.getEdges(jsoupR.root).entrySet()){
-				System.out.println(" destination: "+e.getKey().Title);
-				System.out.println(count);
-				count++;
-			}
+		System.out.println("total edges: "+count);
 		
+		System.out.println("finished makeGraph");
 	}
+	
 }//end class

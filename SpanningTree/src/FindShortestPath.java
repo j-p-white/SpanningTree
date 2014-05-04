@@ -28,7 +28,6 @@ public class FindShortestPath{
 		 temp.Title = source;
 		 while(temp.Title!=destination){
 			 for(Entry<Node,Integer>e:graph.getEdges(temp).entrySet()){
-				 
 				 // if your not visited add it to open edges
 					if(unvisitedNodes.contains(e.getKey())){
 						openEdges.add(new Edge(temp,e.getKey(),(Integer) e.getValue()));
