@@ -16,6 +16,13 @@ import org.jsoup.select.Elements;
 
 
 public class makeGraph {
+	
+	public static Comparator<Edge> compareEdge = new Comparator<Edge>(){	
+		public int compare(Edge e1,Edge e2){
+			return e1.getWeight() - e2.getWeight();
+		}
+	};
+	
 	ArrayList<Point> myPoints = new ArrayList<Point>();
 	ArrayList<Edge> edgeList = new ArrayList<Edge>();
 	private ArrayList<Point> makePoint() throws IOException{
@@ -69,7 +76,7 @@ public class makeGraph {
 		return myPoints;
 	}//end method	
 	
-	private void makeEdges() throws IOException{
+	public void makeEdges() throws IOException{
 		ArrayList<Point> collectedPoints = makePoint();
 		
 		Point p;
@@ -136,14 +143,9 @@ public class makeGraph {
 		return newTitle;
 	}
 	
-	public static Comparator<Edge> compareEdge = new Comparator<Edge>(){	
-		public int compare(Edge e1,Edge e2){
-			return e1.getWeight() - e2.getWeight();
-		}
-	};
+
 
 	public ArrayList<Edge> Start(String source,String destination) throws IOException{
-		makeEdges();
 		Point temp = null,temp2 = null;
 		Edge smallestEdge;
 	

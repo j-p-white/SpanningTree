@@ -37,6 +37,7 @@ public class Test {
 	public static void testFindShortestPath() throws IOException{
 		makeGraph make = new makeGraph();
 		ArrayList<Edge> madeEdges;
+		make.makeEdges();
 		madeEdges = make.Start("Anime", "Manga");
 		System.out.println("total edges: "+ madeEdges.size());
 	}
