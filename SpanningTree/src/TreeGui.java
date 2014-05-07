@@ -18,7 +18,7 @@ public class TreeGui {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(panel);
 		frame.pack();
-		frame.setResizable(false);
+		frame.setResizable(true);
 		frame.setVisible(true);
 	}
 }
