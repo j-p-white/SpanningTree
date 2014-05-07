@@ -19,14 +19,11 @@ protected JLabel myLabel;
 
 	public myPanel(){
 		super(new GridBagLayout());
-		paintPanel paint = new paintPanel();
-		JTextField source = new JTextField(20);
-		JTextField target = new JTextField(20);
+		PaintPanel paint = new PaintPanel();
+		JTextField source = new JTextField("source",20);
+		JTextField target = new JTextField("target",20);
 		JLabel label = new JLabel("graph");
-		JLabel sourceL = new JLabel("source");
-		JLabel targetL = new JLabel("target");
 		JPanel entrancePanel = new JPanel();
-		//entrencePanel.add
 		entrancePanel.add(source);
 		entrancePanel.add(target);
 		entrancePanel.add(new JButton("go"));
@@ -85,7 +82,6 @@ protected JLabel myLabel;
 		c.gridy = 0;
 		c.weightx = 0.0;
 		c.weighty = 0.0;
-		
 		panel.add(label,c);
 		
 		c.fill = GridBagConstraints.BOTH;
@@ -93,6 +89,8 @@ protected JLabel myLabel;
 		c.gridy = 1; 
 		c.weightx = 3.0;
 		c.weighty = 1.0;
+		c.gridwidth = 1;
+		c.gridheight = 2;
 		panel.add(scroll,c);
 		
 		return panel;
