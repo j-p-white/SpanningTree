@@ -38,7 +38,8 @@ public class Test {
 		makeGraph make = new makeGraph();
 		ArrayList<Edge> madeEdges;
 		make.makeEdges();
-		madeEdges = make.Start("Anime", "Manga");
+		make.Start("Anime", "Manga");
+		madeEdges = make.goodEdges;
 		System.out.println("total edges: "+ madeEdges.size());
 	}
 }//end class

@@ -25,6 +25,7 @@ public class makeGraph {
 	
 	ArrayList<Point> myPoints = new ArrayList<Point>();
 	ArrayList<Edge> edgeList = new ArrayList<Edge>();
+	ArrayList<Edge> goodEdges = new ArrayList<Edge>();
 	private ArrayList<Point> makePoint() throws IOException{
 		Document doc;
 		File myFile = new File("Tree.txt");
@@ -145,12 +146,12 @@ public class makeGraph {
 	
 
 
-	public ArrayList<Edge> Start(String source,String destination) throws IOException{
+	public void Start(String source,String destination) throws IOException{
 		Point temp = null,temp2 = null;
 		Edge smallestEdge;
 	
 		Queue<Edge>openEdges = new PriorityQueue<Edge>(11,compareEdge);
-		ArrayList<Edge> goodEdges = new ArrayList<Edge>();
+		//ArrayList<Edge> goodEdges = new ArrayList<Edge>();
 		ArrayList<Edge> edges = new ArrayList<Edge>(edgeList);
 		ArrayList<Point> unusedPoints = new ArrayList<Point>(myPoints);
 		ArrayList<Point> sourceAndTarget = new ArrayList<Point>();
@@ -194,8 +195,7 @@ public class makeGraph {
 		}
 		else{
 			System.out.println("bad titles");
-		}
-		return goodEdges;	
+		}	
 	}// return the list of paths i took to find the edge
 
 	private ArrayList<Point> validate(ArrayList<Point> list,String source,String target){
