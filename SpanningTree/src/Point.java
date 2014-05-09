@@ -1,10 +1,11 @@
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class Point {
 	String title;
-	ArrayList<String> links = new ArrayList<String>();
+	String url;
+	Point link;
+	ArrayList<Point> myList;
 
 	public Point(String title){
 		this.title = title;
@@ -12,16 +13,20 @@ public class Point {
 	public Point(){
 		
 	}
-	public Point(String t,ArrayList<String> l){
+	public void setupArray(String title,String url){
+		myList.add(new Point(title,url));
+	}
+	
+	public Point(String t,String u){
 		title = t;
-		links = l;
+		url = u;
 	}
 	
 	public String getTitle(){
 		return title;
 	}
 	
-	public List<String> getLinks(){
-		return links;
+	public String getUrl(){
+		return url;
 	}
 }

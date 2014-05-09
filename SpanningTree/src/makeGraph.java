@@ -23,36 +23,29 @@ public class makeGraph {
 		}
 	};
 	
+	Graph g= new Graph();
 	ArrayList<Point> myPoints = new ArrayList<Point>();
 	ArrayList<Edge> edgeList = new ArrayList<Edge>();
 	ArrayList<Edge> path = new ArrayList<Edge>();
+	
 	public ArrayList<Point> makePoint() throws IOException{
 		Document doc;
 		File myFile = new File("Tree.txt");
 		Scanner scan;
 		String rootUrl = "";
-		String word;
 		Elements htmlLinks;
 		ArrayList<String> checkList = new ArrayList<String>();
-		Point p,parent = new Point();
+		Point p = new Point();
 		FileWriter fw = new FileWriter(myFile,true);
 		BufferedWriter bw = new BufferedWriter(fw);
 		int count =0;
 
 		checkList.add("http://en.wikipedia.org/wiki/Pok%C3%A9mon");
-		myPoints.add(new Point("Pok%C3%A9mon"));
+		myPoints.add(new Point("Pok%C3%A9mon","http://en.wikipedia.org/wiki/Pok%C3%A9mon"));
 			while(checkList.size()<1000){
 				scan = new Scanner(checkList.get(count));
 				rootUrl = scan.nextLine();
 				doc = Jsoup.connect(rootUrl).timeout(0).get();
-
-				
-					word =parseTitle(rootUrl);
-					for(Point po:myPoints){
-						if(po.title.equals(word)){
-							parent = po;
-						}
-					}
 				
 				htmlLinks = doc.select("a[href]");
 				for(Element e:htmlLinks){
@@ -61,11 +54,7 @@ public class makeGraph {
 					&&! checkList.contains("http://en.wikipedia.org"+e.attr("href"))){
 						
 						bw.write("http://en.wikipedia.org"+e.attr("href")+"\n");
-						p = new Point(parseTitle("http://en.wikipedia.org"+e.attr("href")));
-						
-						if(!parent.links.contains(parseTitle("http://en.wikipedia.org"+e.attr("href")))){
-							parent.links.add(parseTitle("http://en.wikipedia.org"+e.attr("href")));
-						}
+						p = new Point(parseTitle("http://en.wikipedia.org"+e.attr("href")),"http://en.wikipedia.org"+e.attr("href"));
 						
 						if(!myPoints.contains(p)){
 							myPoints.add(p);
@@ -81,35 +70,38 @@ public class makeGraph {
 	}//end method	
 	
 	public void makeEdges() throws IOException{
-		Random rand = new Random();
 		ArrayList<Point> collectedPoints = makePoint();
-		Point p;
-		int count = 0;
-		int random;
-		Edge e;
 		for(Point po:collectedPoints){
-			random =rand.nextInt(1000)+1;
-			count =matchPoints(collectedPoints,po);
-			p = collectedPoints.get(count);
-			e = new Edge(po,p,random);
-			edgeList.add(e);
+			matchPoints(collectedPoints,po);
 		}
-		System.out.println("edgeList size: "+edgeList.size());
 	}
 	
 	
-	private int matchPoints(ArrayList<Point> myPoints,Point p){
-		int count =0;
-		if(!p.links.isEmpty()){
-			for(String s : p.links){
-				if(myPoints.contains(new Point(s))){
-					System.out.println("the count node was found"+ count);
-					break;
+	private void matchPoints(ArrayList<Point> myPoints,Point p) throws IOException{
+		Document doc;
+		Point tempP;
+		Point  foundP;
+		Elements htmlLinks;
+		Edge ed;
+		
+		doc = Jsoup.connect(p.url).timeout(0).get();
+		htmlLinks = doc.select("a[href]");
+		for(Element e:htmlLinks){
+
+			tempP = new Point(parseTitle("http://en.wikipedia.org"+e.attr("href")),"http://en.wikipedia.org"+e.attr("href"));
+			if(myPoints.contains(tempP)){
+				for(int i =0; i < myPoints.size();i++){
+					if(myPoints.get(i) == tempP){
+						System.out.println("found common edge!");
+						foundP = myPoints.get(i);
+						g.addEdges(p, foundP);
+						ed = new Edge(p,foundP,1);
+						edgeList.add(ed);
+						break;
+					}
 				}
-				count++;
 			}
 		}
-		return count;
 	}
 	
 	
