@@ -45,21 +45,14 @@ public class makeGraph {
 				scan = new Scanner(checkList.get(count));
 				rootUrl = scan.nextLine();
 				doc = Jsoup.connect(rootUrl).timeout(0).get();
-				//inital setup if
-				if(!checkList.contains(rootUrl)){
-					parent.title = parseTitle(rootUrl);
-					myPoints.add(parent);
-					checkList.add(rootUrl);
-				}
-				//after inital set up
-				else{
+
+				
 					word =parseTitle(rootUrl);
 					for(Point po:myPoints){
 						if(po.title.equals(word)){
 							parent = po;
 						}
 					}
-				}
 				
 				htmlLinks = doc.select("a[href]");
 				for(Element e:htmlLinks){
@@ -69,9 +62,11 @@ public class makeGraph {
 						
 						bw.write("http://en.wikipedia.org"+e.attr("href")+"\n");
 						p = new Point(parseTitle("http://en.wikipedia.org"+e.attr("href")));
-						if(parent.links.contains(parseTitle("http://en.wikipedia.org"+e.attr("href")))){
+						
+						if(!parent.links.contains(parseTitle("http://en.wikipedia.org"+e.attr("href")))){
 							parent.links.add(parseTitle("http://en.wikipedia.org"+e.attr("href")));
 						}
+						
 						if(!myPoints.contains(p)){
 							myPoints.add(p);
 						}
