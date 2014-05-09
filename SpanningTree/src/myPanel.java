@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -15,7 +16,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 
 public class myPanel extends JPanel implements ActionListener{
@@ -25,7 +25,6 @@ protected JTextArea list;
 protected JLabel myLabel;
 protected JButton startButton;
 protected PaintPanel paintPanel;
-protected JScrollPane scroll;
 protected JPanel listPanel;
 protected makeGraph make = new makeGraph();
 
@@ -59,7 +58,10 @@ protected makeGraph make = new makeGraph();
 		c.weightx = 1.0;
 		c.weighty = 8.0;
 		c.anchor = GridBagConstraints.CENTER;
-		scroll = new JScrollPane(paintPanel,ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		
+		paintPanel.setPreferredSize(new Dimension(0,121000));
+		JScrollPane scroll = new JScrollPane(paintPanel);
+		scroll.setViewportView(paintPanel);
 		add(scroll,c);
 		
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -80,6 +82,7 @@ protected makeGraph make = new makeGraph();
 		sourceField.addActionListener(this);
 		startButton.addActionListener(this);
 		targetField.addActionListener(this);
+		
 	}
 
 	@Override
@@ -97,13 +100,12 @@ protected makeGraph make = new makeGraph();
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
-				}	
-				
-				paintPanel.revalidate();
-				scroll.scrollRectToVisible(paintPanel.getBounds());
+				}		
 			}
 			paintPanel.repaint();
+			paintPanel.revalidate();
 	}
+	
 	
 	private JPanel listPanel(ArrayList<Point> titles){
 		
@@ -146,44 +148,26 @@ protected makeGraph make = new makeGraph();
 		int targetXoff = 820;
 		int targetYoff = 20;
 		int multiplyer = 2;
-		ArrayList<Edge> goodEdges;
+		ArrayList<Edge> path;
 			
 		private static final long serialVersionUID = 1L;
 		public PaintPanel(makeGraph make){
 			setBorder(BorderFactory.createLineBorder(Color.black));
 			setBackground(Color.WHITE);
-			goodEdges = make.goodEdges;	
+			path = make.path;	
 		}
-	/*	
-		public Dimension getPreferedSize(){
-			return new Dimension(450,400);
-		}
-	*/
+		
 		public void paintComponent(Graphics g){
 			super.paintComponent(g);
 			int count = 0;
-			System.out.println("here"+"goodEdges size: "+goodEdges.size());
-			for(Edge e:goodEdges){
+			System.out.println("here"+"path size: "+path.size());
+			for(Edge e:path){
 				g.drawString("source: "+e.getTarget().title, sourceXoff, sourceYoff*(count*multiplyer));
 				g.drawString("target: "+e.getSource().title, targetXoff, targetYoff*(count*multiplyer));
 				count++;
 			}
 		}
 	}// end paint panel class	
-	
-	
-	public static void main(String [] args){
-		javax.swing.SwingUtilities.invokeLater(new Runnable(){
-			public void run(){
-				try {
-					createAndShowGUI();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 	
 	private static void createAndShowGUI() throws IOException{
 		myPanel panel = new myPanel();
@@ -197,11 +181,18 @@ protected makeGraph make = new makeGraph();
 		frame.setVisible(true);
 	}
 	
-	
-	
-	
-	
-	
+	public static void main(String [] args){
+		javax.swing.SwingUtilities.invokeLater(new Runnable(){
+			public void run(){
+				try {
+					createAndShowGUI();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+	}
 	
 	
 }// end myPanelClass

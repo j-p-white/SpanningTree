@@ -9,37 +9,31 @@ import java.util.ArrayList;
 public class Test {
 
 	public static void main(String[] args) throws IOException, InterruptedException {
-		//testCollectPoints(); to make this work again make makepoints public
-		//testCollectEdges();
-		testFindShortestPath();
+		testCollectEdges();
+		//testConnectibity();
 	}// end main
-	/* to make this work again make makepoints public
-	public static void testCollectPoints() throws IOException{
-		makeGraph make = new makeGraph();
-		ArrayList<Point> madePoints;
-		madePoints =make.makePoint();
-		
-		for(int i =0; i <10;i++){
-			System.out.println(madePoints.get(i).title);
-		}
-		System.out.println("totale points: "+madePoints.size());
 	
-	}
-	*/
-	/*
 	public static void testCollectEdges() throws IOException{
 		makeGraph make = new makeGraph();
 		ArrayList<Edge> madeEdges;
-		madeEdges =make.makeEdges();
+		make.makeEdges();
+		
+		madeEdges = make.edgeList;
 		System.out.println("total edges: "+ madeEdges.size());
 	}
-	*/
-	public static void testFindShortestPath() throws IOException{
+	public static void testConnectibity() throws IOException{
 		makeGraph make = new makeGraph();
-		ArrayList<Edge> madeEdges;
-		make.makeEdges();
-		make.Start("Anime", "Manga");
-		madeEdges = make.goodEdges;
-		System.out.println("total edges: "+ madeEdges.size());
+		make.makePoint();
+		
+		for(Point p:make.myPoints){
+			if(p.links.size()>0){
+				System.out.println("");
+				System.out.println("p's name: "+p.title);
+				for(String s:p.links){
+					System.out.println("p's links:"+s);
+				}
+				System.out.println("numbLInks: "+ p.links.size());
+			}
+		}
 	}
 }//end class

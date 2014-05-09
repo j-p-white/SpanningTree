@@ -4,7 +4,7 @@ public class Edge {
 	Random rand = new Random();
 	int weight; 
 	Point source2,target2;
-	boolean visited; 
+	boolean visited = false; 
 	
 	public Edge(Point source2,Point target2,int weight){
 		this.source2 = source2;
@@ -25,6 +25,9 @@ public class Edge {
 	
 	public int getWeight(){
 		return weight;
+	}
+	public boolean getVisited(){
+		return visited;
 	}
 	
 	public String toString(){

@@ -4,7 +4,7 @@ import java.util.List;
 
 public class Point {
 	String title;
-	List<String> links = new ArrayList<String>();
+	ArrayList<String> links = new ArrayList<String>();
 
 	public Point(String title){
 		this.title = title;
@@ -12,7 +12,7 @@ public class Point {
 	public Point(){
 		
 	}
-	public Point(String t,List<String> l){
+	public Point(String t,ArrayList<String> l){
 		title = t;
 		links = l;
 	}
