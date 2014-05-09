@@ -38,8 +38,7 @@ public class makeGraph {
 		FileWriter fw = new FileWriter(myFile,true);
 		BufferedWriter bw = new BufferedWriter(fw);
 		int count =0;
-		
-		
+
 		checkList.add("http://en.wikipedia.org/wiki/Pok%C3%A9mon");
 		myPoints.add(new Point("Pok%C3%A9mon"));
 			while(checkList.size()<1000){
@@ -87,70 +86,37 @@ public class makeGraph {
 	}//end method	
 	
 	public void makeEdges() throws IOException{
-		ArrayList<Point> collectedPoints = makePoint();//very small like 7
-		
+		Random rand = new Random();
+		ArrayList<Point> collectedPoints = makePoint();
 		Point p;
-		for(int i =0;i< collectedPoints.size();i++){
-			System.out.println("the node im on: "+i);
-		p = searchingEdge(edgeList,collectedPoints.get(i));
-			if(!(p == null)){
-				useLinks(p,collectedPoints);
-			}
-			else{
-				useLinks(collectedPoints.get(i),collectedPoints);
-			}
+		int count = 0;
+		int random;
+		Edge e;
+		for(Point po:collectedPoints){
+			random =rand.nextInt(1000)+1;
+			count =matchPoints(collectedPoints,po);
+			p = collectedPoints.get(count);
+			e = new Edge(po,p,random);
+			edgeList.add(e);
 		}
-		System.out.println("the edgeList after: "+edgeList.size());
-		
-		//System.out.println("Points: "+collectedPoints.size());
-		
-		//DoubleUpEdges(edgeList);
-	}
-	// this method is not collecting edges--madness!!!
-	private Point searchingEdge(ArrayList<Edge> edgeList,Point p){
 		System.out.println("edgeList size: "+edgeList.size());
-		for(Edge e:edgeList){
-			System.out.println("the e im useing: "+e.target2.title);
-			
-			if(e.target2.title.equals(p.title)){
-				System.out.println("match found :"+p.title);
-				return p;
-			}
-		}
-		//System.out.println("match not found :"+p.title);
-		return null;
 	}
 	
-	private void useLinks(Point p,ArrayList<Point> collectedPoints){
-		Random rand = new Random();
-		Point temp = null;
-			if(p.links.size()>0){
-				for(String s :p.links){
-					for(Point po:collectedPoints){
-						if(po.title.equals(s)){
-							temp = po;
-							break;
-						}
-					}
-					int myInt = rand.nextInt(1000)+1;
-					Edge e1 = new Edge(p,temp,myInt);
-					edgeList.add(e1);
+	
+	private int matchPoints(ArrayList<Point> myPoints,Point p){
+		int count =0;
+		if(!p.links.isEmpty()){
+			for(String s : p.links){
+				if(myPoints.contains(new Point(s))){
+					System.out.println("the count node was found"+ count);
+					break;
 				}
+				count++;
 			}
-	}	
-	private void DoubleUpEdges(ArrayList<Edge> edgeList){
-		Point t1,t2 = new Point();
-		int weight = 0;
-		ArrayList<Edge> reverseEdges= new ArrayList<Edge>();
-		for(Edge e:edgeList){
-			t1 = e.source2; 
-			t2 = e.target2; 
-			weight = e.weight;
-			Edge reverseCopy = new Edge(t2,t1,weight);
-			reverseEdges.add(reverseCopy);
 		}
-		edgeList.addAll(reverseEdges);
+		return count;
 	}
+	
 	
 	private String parseTitle(String title){
 		String newTitle;
@@ -185,6 +151,7 @@ public class makeGraph {
 							if(unusedPoints.contains(e.getTarget())){
 								//add edge to the que
 								openEdges.add(e);
+								System.out.println("openEdge size: "+openEdges.size());
 							}
 					}
 				}//end for
