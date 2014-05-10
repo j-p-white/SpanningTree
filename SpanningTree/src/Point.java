@@ -4,17 +4,14 @@ import java.util.ArrayList;
 public class Point {
 	String title;
 	String url;
-	Point link;
-	ArrayList<Point> myList;
+	ArrayList<Point> myList = new ArrayList<Point>();
 
 	public Point(String title){
 		this.title = title;
 	}
+	
 	public Point(){
 		
-	}
-	public void setupArray(String title,String url){
-		myList.add(new Point(title,url));
 	}
 	
 	public Point(String t,String u){

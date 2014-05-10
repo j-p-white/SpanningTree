@@ -1,5 +1,5 @@
 import java.io.IOException;
-import java.util.ArrayList;
+
 
 /***************
  * 
@@ -9,15 +9,15 @@ import java.util.ArrayList;
 public class Test {
 
 	public static void main(String[] args) throws IOException, InterruptedException {
-		testCollectEdges();
+		//testGoodEdges();
 	}// end main
-	
-	public static void testCollectEdges() throws IOException{
+	public static void testGoodEdges() throws IOException{
 		makeGraph make = new makeGraph();
-		ArrayList<Edge> madeEdges;
-		make.makeEdges();
-		
-		madeEdges = make.edgeList;
-		System.out.println("total edges: "+ madeEdges.size());
+		make.makeMap();
+		for(Edge e: make.goodEdges){
+			if(e.source2.title.equals("Anime")){
+				System.out.println("found anime edge");
+			}
+		}
 	}
 }//end class

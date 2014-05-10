@@ -30,7 +30,7 @@ protected makeGraph make = new makeGraph();
 
 	public myPanel() throws IOException{
 		super(new GridBagLayout());
-		make.makeEdges();
+		make.makeMap();
 		 paintPanel = new PaintPanel(make);
 		 listPanel = listPanel(make.myPoints);
 		 sourceField = new JTextField("source",20);
@@ -95,12 +95,7 @@ protected makeGraph make = new makeGraph();
 				t = targetField.getText();
 					sourceField.setText("source");
 					targetField.setText("target");
-				try {
-					make.Start(s, t);
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}		
+					make.findPath(s, t);		
 			}
 			paintPanel.repaint();
 			paintPanel.revalidate();
@@ -160,7 +155,7 @@ protected makeGraph make = new makeGraph();
 		public void paintComponent(Graphics g){
 			super.paintComponent(g);
 			int count = 0;
-			System.out.println("here"+"path size: "+path.size());
+			System.out.println("here in paint"+"path size: "+path.size());
 			for(Edge e:path){
 				g.drawString("source: "+e.getTarget().title, sourceXoff, sourceYoff*(count*multiplyer));
 				g.drawString("target: "+e.getSource().title, targetXoff, targetYoff*(count*multiplyer));
