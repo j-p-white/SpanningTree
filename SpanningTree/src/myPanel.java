@@ -29,11 +29,11 @@ protected makeGraph make = new makeGraph();
 	public myPanel() throws IOException, ClassNotFoundException{
 		super(new GridBagLayout());
 		if(!make.myFile.exists()){
-			make.makeMap();
+			//make.makeMap();
 		}
 		else{
 			System.out.println("here in the file");
-			make.readEdgeList(make.myFile);
+			//make.readEdgeList(make.myFile);
 		}
 		 pathpanel = pathPanel(make.path);
 		 listPanel = listPanel(make.myPoints);
@@ -101,7 +101,7 @@ protected makeGraph make = new makeGraph();
 				t = targetField.getText();
 					sourceField.setText("source");
 					targetField.setText("target");
-					make.findPath(s, t);		
+					//find the smallest path
 			}
 			    pathPanel(make.path);
 	}

@@ -10,19 +10,9 @@ import java.util.ArrayList;
 public class Test {
 
 	public static void main(String[] args) throws IOException, InterruptedException {
-		//testGoodEdges();
 		testPrimsWorking();
 	}// end main
-	public static void testGoodEdges() throws IOException{
-		makeGraph make = new makeGraph();
-		make.makeMap();
-		for(Edge e: make.goodEdges){
-			if(e.source2.title.equals("Anime")){
-				System.out.println("found anime edge");
-			}
-		}
-	}
-	public static void testPrimsWorking(){
+	public static void testPrimsWorking() throws IOException{
 		Point zero = new Point("pokemon");
 		Point one =new Point("charmander"); 
 		Point two = new Point("bulbasor");
