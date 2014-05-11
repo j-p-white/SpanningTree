@@ -12,22 +12,22 @@ public class Graph{
 	}
 	
 	
-	public void addEdges(Point Source,Point Target){
+	public void addEdges(Point source,Point target,int weight){
 		//if graph does not have source 
-		if(Source == null){
+		if(source == null){
 			throw new NullPointerException("source is null");
 		}
-		if(Target == null){
+		if(target == null){
 			throw new NullPointerException("target is null");
 		}
-		if(!graph.containsKey(Source)){
-			graph.put(Source, new HashMap<Point,Integer>());
+		if(!graph.containsKey(source)){
+			graph.put(source, new HashMap<Point,Integer>());
 		}
-		if(!graph.containsKey(Target)){
-			graph.put(Target, new HashMap<Point,Integer>());
+		if(!graph.containsKey(target)){
+			graph.put(target, new HashMap<Point,Integer>());
 		}
-		graph.get(Source).put(Target, 1); 
-		graph.get(Target).put(Source, 1);
+		graph.get(source).put(target, weight); 
+		graph.get(target).put(source, weight);
 	}
 	public Set<Point> getMapPoints(){
 		return Collections.unmodifiableSet(graph.keySet());
