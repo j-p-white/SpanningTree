@@ -25,43 +25,62 @@ public class makeGraph {
 	};
 	
 	Graph g= new Graph();
-	ArrayList<Point> myPoints = new ArrayList<Point>();
 	ArrayList<Edge> edgeList = new ArrayList<Edge>();
 	ArrayList<Edge> path = new ArrayList<Edge>();
+	ArrayList<Point> myPoints = new ArrayList<Point>();
 	ArrayList<Edge> goodEdges = new ArrayList<Edge>();
+	File myFile = new File("Tree.txt");
 	
 	private void makePoint() throws IOException {
-		File myFile = new File("Tree.txt");
-		FileWriter fw = new FileWriter(myFile,true);
-		BufferedWriter bw = new BufferedWriter(fw);
 		Point parent;
 		Point poi;
 		int count = 0;
 		int rotationCount = 0;
-		parent = new Point("Pok%C3%A9mon","http://en.wikipedia.org/wiki/Pok%C3%A9mon");
-	
+			parent = new Point("Pok%C3%A9mon","http://en.wikipedia.org/wiki/Pok%C3%A9mon");
 			populatePoint(parent);
-		while(count <1000){		
-			for(int i =0; i < parent.myList.size();i++){
-				System.out.println("im in link = "+i+" of "+parent.title);
-				System.out.println("i currently have: "+count+" nodes");
-				count++;
-				poi = parent.myList.get(i);
-				System.out.println("poi is :"+poi.title);
-				myPoints.add(poi);
-				populatePoint(poi);
-
+			while(count <1000){		
+				for(int i =0; i < parent.myList.size();i++){
+					System.out.println("im in link = "+i+" of "+parent.title);
+					System.out.println("i currently have: "+count+" nodes");
+					count++;
+					poi = parent.myList.get(i);
+					myPoints.add(poi);
+					System.out.println("poi is :"+poi.title);
+					populatePoint(poi);
+				}
+				parent = parent.myList.get(rotationCount);
+				rotationCount++;
 			}
-			parent = parent.myList.get(rotationCount);
-			rotationCount++;
-		}	
-			
-			System.out.println("myPointsSize: "+myPoints.size());
-			for(Point p:myPoints){
-				bw.write(p.url);
-			}
-			bw.close();
+			writeEdgeList(myFile);
 	}//end method	
+	
+	private void writeEdgeList(File myFile) throws IOException{
+		FileWriter fw = new FileWriter(myFile,true);
+		BufferedWriter bw = new BufferedWriter(fw);
+			for(Edge e:edgeList){
+				bw.write(e.source2.url+","+e.target2.url+"\n");
+			}
+			bw.flush();
+			bw.close();
+	}
+	
+	public void readEdgeList(File myFile) throws IOException{
+		Scanner scan = new Scanner(myFile);
+		Point s,t;
+		while(scan.hasNext()){
+			String edge = scan.next();
+			String[] pice = edge.split(",");
+			s = new Point(parseTitle(pice[0]),pice[0]);
+			t = new Point(parseTitle(pice[1]),pice[1]);
+			//e = new Edge(s,t,1);
+			g.addEdges(s, t);
+			if(!myPoints.contains(s)){
+				myPoints.add(s);
+			}
+		}
+		scan.close();
+		System.out.println("myPoints size: "+myPoints.size());
+	}
 	
 	private void populatePoint(Point parent) throws IOException{
 		//ArrayList<Point> nPoints = new ArrayList<Point>();
@@ -81,7 +100,7 @@ public class makeGraph {
 			&& !e.attr("href").contains("//")&& !e.attr("href").contains("#")&& !e.attr("href").contains("Amazon") && e.attr("href").length()>0){
 				
 				p = new Point(parseTitle("http://en.wikipedia.org"+e.attr("href")),"http://en.wikipedia.org"+e.attr("href"));
-				myPoints.add(p);
+					myPoints.add(p);
 					parent.myList.add(p);
 					g.addEdges(parent, p);
 					ed = new Edge(parent,p,1);
@@ -101,6 +120,9 @@ public class makeGraph {
 
 	public void makeMap() throws IOException{
 		makePoint();
+		//write the map to the file
+		
+		
 		Edge smallestEdge;
 	
 		Queue<Edge>openEdges = new PriorityQueue<Edge>(11,compareEdge);
@@ -129,13 +151,11 @@ public class makeGraph {
 	
 				sourceP = smallestEdge.getTarget(); 
 				unusedPoints.remove(sourceP);
-			}//end big while 	
+			}//end big while
 	}
 	
 	public void findPath(String source,String target){
-		int count =0;
 		for(Edge e:goodEdges){
-			System.out.println("edges found: "+ count);
 			if(e.source2.title.equals(source) && e.visited == false){
 				e.visited = true;
 				if(findPathRecursive(e,goodEdges,target)){
@@ -143,11 +163,10 @@ public class makeGraph {
 					break;
 				}
 			}
-			count++;
 		}
 	}
 	
-	public boolean findPathRecursive(Edge edge,ArrayList<Edge> map,String goal){
+	private boolean findPathRecursive(Edge edge,ArrayList<Edge> map,String goal){
 		System.out.println("im recursing: "+ edge.source2.title);
 		boolean found = false;
 			edge.visited = true;

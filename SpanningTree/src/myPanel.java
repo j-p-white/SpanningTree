@@ -1,5 +1,4 @@
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -24,14 +23,19 @@ protected JTextField sourceField, targetField;
 protected JTextArea list;
 protected JLabel myLabel;
 protected JButton startButton;
-protected PaintPanel paintPanel;
-protected JPanel listPanel;
+protected JPanel listPanel,pathpanel;
 protected makeGraph make = new makeGraph();
 
-	public myPanel() throws IOException{
+	public myPanel() throws IOException, ClassNotFoundException{
 		super(new GridBagLayout());
-		make.makeMap();
-		 paintPanel = new PaintPanel(make);
+		if(!make.myFile.exists()){
+			make.makeMap();
+		}
+		else{
+			System.out.println("here in the file");
+			make.readEdgeList(make.myFile);
+		}
+		 pathpanel = pathPanel(make.path);
 		 listPanel = listPanel(make.myPoints);
 		 sourceField = new JTextField("source",20);
 		 targetField = new JTextField("target",20);
@@ -58,12 +62,13 @@ protected makeGraph make = new makeGraph();
 		c.weightx = 1.0;
 		c.weighty = 8.0;
 		c.anchor = GridBagConstraints.CENTER;
-		
+		add(pathpanel,c);
+	/*	
 		paintPanel.setPreferredSize(new Dimension(0,121000));
 		JScrollPane scroll = new JScrollPane(paintPanel);
 		scroll.setViewportView(paintPanel);
 		add(scroll,c);
-		
+		*/
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0; 
 		c.gridy = 2;
@@ -83,6 +88,7 @@ protected makeGraph make = new makeGraph();
 		startButton.addActionListener(this);
 		targetField.addActionListener(this);
 		
+		
 	}
 
 	@Override
@@ -97,8 +103,7 @@ protected makeGraph make = new makeGraph();
 					targetField.setText("target");
 					make.findPath(s, t);		
 			}
-			paintPanel.repaint();
-			paintPanel.revalidate();
+			    pathPanel(make.path);
 	}
 	
 	
@@ -134,6 +139,38 @@ protected makeGraph make = new makeGraph();
 		return panel;
 	}
 	
+	private JPanel pathPanel(ArrayList<Edge> path){
+		JPanel panel = new JPanel(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		
+		JTextArea area = new JTextArea();
+		area.setEditable(false);
+		JScrollPane scroll = new JScrollPane(area); 
+		
+		JLabel label = new JLabel("path panel"); 
+		
+		for(Edge e: path){
+			area.append(e.source2.title +" to "+e.target2.title);
+		}
+		
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 0;
+		c.weightx = 0.0;
+		c.weighty = 0.0;
+		panel.add(label,c);	
+		
+		c.fill = GridBagConstraints.BOTH;
+		c.gridx = 0; 
+		c.gridy = 1; 
+		c.weightx = 8.0;
+		c.weighty = 1.0;
+		panel.add(scroll,c);
+		
+		return panel;
+	}
+	
+	
 	public class PaintPanel extends JPanel {
 		//source offset
 		int sourceXoff = 20; 
@@ -164,7 +201,7 @@ protected makeGraph make = new makeGraph();
 		}
 	}// end paint panel class	
 	
-	private static void createAndShowGUI() throws IOException{
+	private static void createAndShowGUI() throws IOException, ClassNotFoundException{
 		myPanel panel = new myPanel();
 		panel.setOpaque(true);
 		SwingUtilities.isEventDispatchThread();
@@ -181,13 +218,11 @@ protected makeGraph make = new makeGraph();
 			public void run(){
 				try {
 					createAndShowGUI();
-				} catch (IOException e) {
+				} catch (IOException | ClassNotFoundException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 		});
 	}
-	
-	
 }// end myPanelClass
