@@ -1,10 +1,5 @@
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Scanner;
 
 import org.jsoup.Jsoup;
@@ -12,21 +7,14 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class makeGraph {
+public class CollectPoints {
 	
 	public static Comparator<Edge> compareEdge = new Comparator<Edge>(){	
 		public int compare(Edge e1,Edge e2){
 			return e1.getWeight() - e2.getWeight();
 		}
 	};
-	
-	Graph g= new Graph();
-	ArrayList<Edge> edgeList = new ArrayList<Edge>();
-	ArrayList<Edge> path = new ArrayList<Edge>();
-	ArrayList<Point> myPoints = new ArrayList<Point>();
-	ArrayList<Edge> goodEdges = new ArrayList<Edge>();
-	HashMap<String,Point> treeMap= new HashMap<String,Point>();
-	File myFile = new File("Tree.txt");
+	protected Graph g = new Graph();
 	
 	public void makePoint() throws IOException {
 		Point parent;
@@ -37,12 +25,11 @@ public class makeGraph {
 			populatePoint(parent);
 			while(count <1000){		
 				for(int i =0; i < parent.myList.size();i++){
-					System.out.println("im in link = "+i+" of "+parent.title);
-					System.out.println("i currently have: "+count+" nodes");
+				//	System.out.println("im in link = "+i+" of "+parent.title);
+				//	System.out.println("i currently have: "+count+" nodes");
 					count++;
 					poi = parent.myList.get(i);
-					myPoints.add(poi);
-					System.out.println("poi is :"+poi.title);
+				//	System.out.println("poi is :"+poi.title);
 					populatePoint(poi);
 				}
 				parent = parent.myList.get(rotationCount);
@@ -52,7 +39,6 @@ public class makeGraph {
 	
 	private void populatePoint(Point parent) throws IOException{
 		Scanner scan;
-		Edge ed;
 		Elements htmlLinks;
 		Document doc;
 		String rootUrl;
@@ -68,14 +54,10 @@ public class makeGraph {
 			&& !e.attr("href").contains("//")&& !e.attr("href").contains("#")&& !e.attr("href").contains("Amazon") && e.attr("href").length()>0){
 				
 				p = new Point(parseTitle("http://en.wikipedia.org"+e.attr("href")),"http://en.wikipedia.org"+e.attr("href"));
-					myPoints.add(p);
 					parent.myList.add(p);
-					//g.addEdges(parent, p);
-					ed = new Edge(parent,p,1);
-					edgeList.add(ed);
+					g.addEdges(parent, p, 1);
 				}
 			}
-		treeMap.put(parent.title, parent);	
 	}
 	
 	private String parseTitle(String title){

@@ -26,4 +26,13 @@ public class Point {
 	public String getUrl(){
 		return url;
 	}
+	
+	public boolean isLeaf(){
+		if(myList.isEmpty()){
+			return true;
+		}
+		else{
+			return false;
+		}
+	}
 }

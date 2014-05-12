@@ -1,13 +1,14 @@
-import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -24,19 +25,38 @@ protected JTextArea list;
 protected JLabel myLabel;
 protected JButton startButton;
 protected JPanel listPanel,pathpanel;
-protected makeGraph make = new makeGraph();
+protected CollectPoints points = new CollectPoints();
+protected Graph g = new Graph();
 
 	public myPanel() throws IOException, ClassNotFoundException{
 		super(new GridBagLayout());
-		if(!make.myFile.exists()){
-			//make.makeMap();
+		if(!Prims.myFile.exists()){
+			//make the points
+			points.makePoint();
+			
+			//get the map from points 
+			//Collection<Point> mapPoints = points.pointMap.values();
+		/*	
+			//make the graph from my new points
+			for(Point p:mapPoints){
+				for(Point link:p.myList){
+					g.addEdges(p, link, 1);
+				}
+			}
+			*/
+			//after the graph is made run prims
+			Prims.makeTree(points.g);
+			//prims will write everything to a file so all is well
+			
+			//call bredath-1st search on Prims map and get the path
 		}
 		else{
-			System.out.println("here in the file");
-			//make.readEdgeList(make.myFile);
+			Prims.readPrims();
+			//call bredath-1st search on Prims map and get the path
 		}
-		 pathpanel = pathPanel(make.path);
-		 listPanel = listPanel(make.myPoints);
+		
+		 pathpanel = null;
+		 listPanel = listPanel(Prims.treeMap.values());
 		 sourceField = new JTextField("source",20);
 		 targetField = new JTextField("target",20);
 		 startButton = new JButton("go");
@@ -102,12 +122,14 @@ protected makeGraph make = new makeGraph();
 					sourceField.setText("source");
 					targetField.setText("target");
 					//find the smallest path
+					
+					pathpanel = pathPanel(bfs(Prims.treeMap,s,t));
 			}
-			    pathPanel(make.path);
+			    
 	}
 	
 	
-	private JPanel listPanel(ArrayList<Point> titles){
+	private JPanel listPanel(Collection<Point> titles){
 		
 		//give this a title from the Gui
 		JPanel panel = new JPanel(new GridBagLayout());
@@ -139,7 +161,7 @@ protected makeGraph make = new makeGraph();
 		return panel;
 	}
 	
-	private JPanel pathPanel(ArrayList<Edge> path){
+	private JPanel pathPanel(ArrayList<Point> arrayList){
 		JPanel panel = new JPanel(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		
@@ -149,8 +171,8 @@ protected makeGraph make = new makeGraph();
 		
 		JLabel label = new JLabel("path panel"); 
 		
-		for(Edge e: path){
-			area.append(e.source2.title +" to "+e.target2.title);
+		for(Point e: arrayList){
+			area.append(e.title + (char)0xf09f988a);
 		}
 		
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -170,7 +192,32 @@ protected makeGraph make = new makeGraph();
 		return panel;
 	}
 	
+	private ArrayList<Point> bfs(HashMap<String,Point> treeMap,String source,String target){
+		ArrayList<Point> pendingList = new ArrayList<Point>();
+		ArrayList<String> usedList = new ArrayList<String>();
+		Queue<Point> queue = new LinkedList<Point>();
+		queue.add(treeMap.get(source));
+		pendingList.add(treeMap.get(source));
+		usedList.add(treeMap.get(source).title);
+		while(!queue.isEmpty()){
+			Point point = queue.remove();
+			for(Point p:point.myList ){
+				if(!usedList.contains(p.title)){
+					if(p.isLeaf() && !p.title.equals(target)){
+						if(point.myList.size() == 1){
+							pendingList.remove(point);
+						}
+						queue.add(p);
+						pendingList.add(p);
+						usedList.add(p.title);
+					}
+				}
+			}//end for
+		}// end while
+		return pendingList;
+	}//end method
 	
+	/*
 	public class PaintPanel extends JPanel {
 		//source offset
 		int sourceXoff = 20; 
@@ -183,7 +230,7 @@ protected makeGraph make = new makeGraph();
 		ArrayList<Edge> path;
 			
 		private static final long serialVersionUID = 1L;
-		public PaintPanel(makeGraph make){
+		public PaintPanel(CollectPoints make){
 			setBorder(BorderFactory.createLineBorder(Color.black));
 			setBackground(Color.WHITE);
 			path = make.path;	
@@ -200,7 +247,7 @@ protected makeGraph make = new makeGraph();
 			}
 		}
 	}// end paint panel class	
-	
+	*/
 	private static void createAndShowGUI() throws IOException, ClassNotFoundException{
 		myPanel panel = new myPanel();
 		panel.setOpaque(true);

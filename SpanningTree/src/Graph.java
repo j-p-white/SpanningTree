@@ -11,7 +11,6 @@ public class Graph{
 		graph = new HashMap<Point,Map<Point,Integer>>();
 	}
 	
-	
 	public void addEdges(Point source,Point target,int weight){
 		//if graph does not have source 
 		if(source == null){
