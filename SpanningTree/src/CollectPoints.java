@@ -15,7 +15,6 @@ public class CollectPoints {
 		}
 	};
 	protected Graph g = new Graph();
-	
 	public void makePoint() throws IOException {
 		Point parent;
 		Point poi;
@@ -25,11 +24,8 @@ public class CollectPoints {
 			populatePoint(parent);
 			while(count <1000){		
 				for(int i =0; i < parent.myList.size();i++){
-				//	System.out.println("im in link = "+i+" of "+parent.title);
-				//	System.out.println("i currently have: "+count+" nodes");
 					count++;
 					poi = parent.myList.get(i);
-				//	System.out.println("poi is :"+poi.title);
 					populatePoint(poi);
 				}
 				parent = parent.myList.get(rotationCount);

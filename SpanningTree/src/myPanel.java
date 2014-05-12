@@ -1,3 +1,5 @@
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -8,6 +10,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -26,42 +29,26 @@ protected JLabel myLabel;
 protected JButton startButton;
 protected JPanel listPanel,pathpanel;
 protected CollectPoints points = new CollectPoints();
-protected Graph g = new Graph();
 
 	public myPanel() throws IOException, ClassNotFoundException{
 		super(new GridBagLayout());
 		if(!Prims.myFile.exists()){
 			//make the points
 			points.makePoint();
-			
-			//get the map from points 
-			//Collection<Point> mapPoints = points.pointMap.values();
-		/*	
-			//make the graph from my new points
-			for(Point p:mapPoints){
-				for(Point link:p.myList){
-					g.addEdges(p, link, 1);
-				}
-			}
-			*/
 			//after the graph is made run prims
-			Prims.makeTree(points.g);
-			//prims will write everything to a file so all is well
-			
-			//call bredath-1st search on Prims map and get the path
+			Prims.makeTree(points.g);	
 		}
 		else{
 			Prims.readPrims();
-			//call bredath-1st search on Prims map and get the path
 		}
 		
-		 pathpanel = null;
-		 listPanel = listPanel(Prims.treeMap.values());
+		 pathpanel = new JPanel();
+		 pathpanel.setPreferredSize(new Dimension(500,250));
+		 listPanel = listPanel(Prims.treeMap.keySet());
 		 sourceField = new JTextField("source",20);
 		 targetField = new JTextField("target",20);
 		 startButton = new JButton("go");
 		
-		 
 		JLabel label = new JLabel("graph");
 		JPanel entrancePanel = new JPanel();
 		entrancePanel.add(sourceField);
@@ -83,12 +70,7 @@ protected Graph g = new Graph();
 		c.weighty = 8.0;
 		c.anchor = GridBagConstraints.CENTER;
 		add(pathpanel,c);
-	/*	
-		paintPanel.setPreferredSize(new Dimension(0,121000));
-		JScrollPane scroll = new JScrollPane(paintPanel);
-		scroll.setViewportView(paintPanel);
-		add(scroll,c);
-		*/
+
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0; 
 		c.gridy = 2;
@@ -107,29 +89,29 @@ protected Graph g = new Graph();
 		sourceField.addActionListener(this);
 		startButton.addActionListener(this);
 		targetField.addActionListener(this);
-		
-		
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String s,t;
-		
 			if(e.getSource() == startButton){
-				
 				s = sourceField.getText();
 				t = targetField.getText();
-					sourceField.setText("source");
-					targetField.setText("target");
-					//find the smallest path
-					
-					pathpanel = pathPanel(bfs(Prims.treeMap,s,t));
+					sourceField.setBackground(Color.red);
+					targetField.setBackground(Color.red);
+					pathpanel.add(pathPanel(bfs(Prims.treeMap,s,t)));
+					pathpanel.revalidate();
+					pathpanel.repaint();
 			}
-			    
+			sourceField.setText("source");
+			targetField.setText("target");
+			sourceField.setBackground(Color.WHITE);
+			targetField.setBackground(Color.WHITE);
+			
+			
 	}
 	
-	
-	private JPanel listPanel(Collection<Point> titles){
+	private JPanel listPanel(Set<String> set){
 		
 		//give this a title from the Gui
 		JPanel panel = new JPanel(new GridBagLayout());
@@ -139,9 +121,9 @@ protected Graph g = new Graph();
 		area.setEditable(false);
 		JScrollPane scroll = new JScrollPane(area);
 		JLabel label = new JLabel("list");
-		
-		for(Point p: titles){
-			area.append(p.getTitle() +"\n");
+		scroll.setPreferredSize(new Dimension(200,250));
+		for(String p: set){
+			area.append(p +"\n");
 		}
 		
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -161,35 +143,21 @@ protected Graph g = new Graph();
 		return panel;
 	}
 	
-	private JPanel pathPanel(ArrayList<Point> arrayList){
-		JPanel panel = new JPanel(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
+	private JScrollPane pathPanel(ArrayList<Point> arrayList){
+		//JPanel panel = new JPanel(new GridBagLayout());
+		//GridBagConstraints c = new GridBagConstraints();
 		
 		JTextArea area = new JTextArea();
 		area.setEditable(false);
 		JScrollPane scroll = new JScrollPane(area); 
+		scroll.setPreferredSize(new Dimension(500,250));
 		
-		JLabel label = new JLabel("path panel"); 
+		//JLabel label = new JLabel("path panel"); 
 		
 		for(Point e: arrayList){
-			area.append(e.title + (char)0xf09f988a);
+			area.append(e.title + "\n"+(char)0x2193+"\n");
 		}
-		
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.gridx = 0;
-		c.gridy = 0;
-		c.weightx = 0.0;
-		c.weighty = 0.0;
-		panel.add(label,c);	
-		
-		c.fill = GridBagConstraints.BOTH;
-		c.gridx = 0; 
-		c.gridy = 1; 
-		c.weightx = 8.0;
-		c.weighty = 1.0;
-		panel.add(scroll,c);
-		
-		return panel;
+		return scroll;
 	}
 	
 	private ArrayList<Point> bfs(HashMap<String,Point> treeMap,String source,String target){
@@ -214,41 +182,12 @@ protected Graph g = new Graph();
 				}
 			}//end for
 		}// end while
+		System.out.println("finished");
+		System.out.println("path size is: "+pendingList.size());
 		return pendingList;
 	}//end method
 	
-	/*
-	public class PaintPanel extends JPanel {
-		//source offset
-		int sourceXoff = 20; 
-		int sourceYoff = 20;
-		
-		//target offset
-		int targetXoff = 820;
-		int targetYoff = 20;
-		int multiplyer = 2;
-		ArrayList<Edge> path;
-			
-		private static final long serialVersionUID = 1L;
-		public PaintPanel(CollectPoints make){
-			setBorder(BorderFactory.createLineBorder(Color.black));
-			setBackground(Color.WHITE);
-			path = make.path;	
-		}
-		
-		public void paintComponent(Graphics g){
-			super.paintComponent(g);
-			int count = 0;
-			System.out.println("here in paint"+"path size: "+path.size());
-			for(Edge e:path){
-				g.drawString("source: "+e.getTarget().title, sourceXoff, sourceYoff*(count*multiplyer));
-				g.drawString("target: "+e.getSource().title, targetXoff, targetYoff*(count*multiplyer));
-				count++;
-			}
-		}
-	}// end paint panel class	
-	*/
-	private static void createAndShowGUI() throws IOException, ClassNotFoundException{
+	private static void createAndShowGUI() throws ClassNotFoundException, IOException {
 		myPanel panel = new myPanel();
 		panel.setOpaque(true);
 		SwingUtilities.isEventDispatchThread();

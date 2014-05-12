@@ -18,6 +18,7 @@ public class Prims {
 			return e1.getWeight() - e2.getWeight();
 		}
 	};
+	//ArrayList<Point> myPoints = new ArrayList<Point>();
 	static HashMap<String,Point> treeMap= new HashMap<String,Point>();
 	static File myFile = new File("Tree.txt");
 	
@@ -29,14 +30,11 @@ public class Prims {
 		
 		Point sourcePoint = unusedPoints.iterator().next();
 		unusedPoints.remove(sourcePoint);
-		int count = 0;
 		
 		while(!unusedPoints.isEmpty()){
 			for(Entry<Point, Integer> e:g.getEdges(sourcePoint).entrySet()){
 				if(unusedPoints.contains(e.getKey())){
-					count++;
 					pq.add(new Edge(sourcePoint,e.getKey(),(Integer)e.getValue()));
-					System.out.println("count is: "+count);
 				}	
 			}//end for
 			
@@ -44,9 +42,7 @@ public class Prims {
 			
 			while(!unusedPoints.contains(smallEdge.getTarget())){
 				smallEdge = pq.poll();
-				System.out.println("skipping: "+pq.size());
 			}
-			System.out.println("using: "+smallEdge.toString());
 			goodEdges.add(smallEdge);
 			
 			sourcePoint = smallEdge.getTarget();
