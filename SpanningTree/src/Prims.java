@@ -18,7 +18,6 @@ public class Prims {
 			return e1.getWeight() - e2.getWeight();
 		}
 	};
-	//ArrayList<Point> myPoints = new ArrayList<Point>();
 	static HashMap<String,Point> treeMap= new HashMap<String,Point>();
 	static File myFile = new File("Tree.txt");
 	
@@ -50,6 +49,8 @@ public class Prims {
 		}//end while
 		
 		writePrims(goodEdges);
+		fillMap(goodEdges);
+		
 		return goodEdges;
 	}//end method
 	
@@ -73,7 +74,7 @@ public class Prims {
 			if(!treeMap.containsKey(parseTitle(pice[0]))){
 				t = new Point(parseTitle(pice[1]),pice[1]);
 				s.myList.add(t);
-				treeMap.put(parseTitle(pice[0]), s);
+				treeMap.put(s.title, s);
 			}
 			else{
 				t = new Point(parseTitle(pice[1]),pice[1]);
@@ -82,6 +83,19 @@ public class Prims {
 		}
 		scan.close();
 	}
+	
+	private static void fillMap(ArrayList<Edge> goodEdges){
+		for(Edge e:goodEdges){
+			if(treeMap.containsKey(e.source2.title)){
+				treeMap.get(e.source2.title).myList.add(e.target2);
+			}
+			else{
+				e.source2.myList.add(e.target2);
+				treeMap.put(e.source2.title, e.source2);
+			}
+		}
+	}
+	
 	
 	private static String parseTitle(String title){
 		String newTitle;

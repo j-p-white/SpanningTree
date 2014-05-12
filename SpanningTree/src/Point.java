@@ -1,7 +1,12 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 
 
-public class Point {
+public class Point implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	String title;
 	String url;
 	ArrayList<Point> myList = new ArrayList<Point>();

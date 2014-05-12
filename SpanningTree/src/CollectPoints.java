@@ -31,6 +31,17 @@ public class CollectPoints {
 				parent = parent.myList.get(rotationCount);
 				rotationCount++;
 			}
+			for(int i =0; i < g.getMapPoints().size();i++){
+				Point p = g.getMapPoints().iterator().next();
+				for(Point link:p.myList){
+					if(link.myList.isEmpty()){
+						populatePoint(link);
+					}
+				}
+			}
+	//	for(Point p :g.getMapPoints()){
+			
+	//	}
 	}//end method	
 	
 	private void populatePoint(Point parent) throws IOException{

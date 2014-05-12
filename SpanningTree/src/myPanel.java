@@ -6,7 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -95,6 +94,7 @@ protected CollectPoints points = new CollectPoints();
 	public void actionPerformed(ActionEvent e) {
 		String s,t;
 			if(e.getSource() == startButton){
+				pathpanel.removeAll();
 				s = sourceField.getText();
 				t = targetField.getText();
 					sourceField.setBackground(Color.red);
@@ -103,12 +103,11 @@ protected CollectPoints points = new CollectPoints();
 					pathpanel.revalidate();
 					pathpanel.repaint();
 			}
+			
 			sourceField.setText("source");
 			targetField.setText("target");
 			sourceField.setBackground(Color.WHITE);
 			targetField.setBackground(Color.WHITE);
-			
-			
 	}
 	
 	private JPanel listPanel(Set<String> set){
@@ -144,15 +143,10 @@ protected CollectPoints points = new CollectPoints();
 	}
 	
 	private JScrollPane pathPanel(ArrayList<Point> arrayList){
-		//JPanel panel = new JPanel(new GridBagLayout());
-		//GridBagConstraints c = new GridBagConstraints();
-		
 		JTextArea area = new JTextArea();
 		area.setEditable(false);
 		JScrollPane scroll = new JScrollPane(area); 
 		scroll.setPreferredSize(new Dimension(500,250));
-		
-		//JLabel label = new JLabel("path panel"); 
 		
 		for(Point e: arrayList){
 			area.append(e.title + "\n"+(char)0x2193+"\n");
@@ -164,9 +158,11 @@ protected CollectPoints points = new CollectPoints();
 		ArrayList<Point> pendingList = new ArrayList<Point>();
 		ArrayList<String> usedList = new ArrayList<String>();
 		Queue<Point> queue = new LinkedList<Point>();
+		
 		queue.add(treeMap.get(source));
 		pendingList.add(treeMap.get(source));
-		usedList.add(treeMap.get(source).title);
+		usedList.add(source);
+		
 		while(!queue.isEmpty()){
 			Point point = queue.remove();
 			for(Point p:point.myList ){
@@ -179,13 +175,37 @@ protected CollectPoints points = new CollectPoints();
 						pendingList.add(p);
 						usedList.add(p.title);
 					}
+					else if(p.title.equals(target)){
+						System.out.println("found target");
+						pendingList.add(p);
+						break;
+					}
+					else{
+						pendingList.add(p);
+						queue.add(p);
+					}
 				}
 			}//end for
 		}// end while
+		if(!validate(pendingList,target)){
+			Point failed = new Point("not found");
+			pendingList.clear();
+			pendingList.add(failed);
+		}
 		System.out.println("finished");
 		System.out.println("path size is: "+pendingList.size());
 		return pendingList;
 	}//end method
+	
+	private boolean validate(ArrayList<Point> list,String target){
+		for(Point p:list){
+			if(p.title.equals(target)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	
 	private static void createAndShowGUI() throws ClassNotFoundException, IOException {
 		myPanel panel = new myPanel();
