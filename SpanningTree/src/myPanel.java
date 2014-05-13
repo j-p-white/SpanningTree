@@ -22,7 +22,7 @@ import javax.swing.SwingUtilities;
 
 public class myPanel extends JPanel implements ActionListener{
 private static final long serialVersionUID = 1L;
-protected JTextField sourceField, targetField;
+protected JTextField sourceField, targetField,treeField;
 protected JTextArea list;
 protected JLabel myLabel;
 protected JButton startButton;
@@ -32,7 +32,7 @@ protected CollectPoints points = new CollectPoints();
 
 	public myPanel() throws IOException, ClassNotFoundException{
 		super(new GridBagLayout());
-		int numbTrees;
+		Integer numbTrees;
 		if(!Prims.myFile.exists()){
 			//make the points
 			points.makePoint();
@@ -53,6 +53,7 @@ protected CollectPoints points = new CollectPoints();
 		 listPanel = listPanel(Prims.treeMap.keySet());
 		 sourceField = new JTextField("source",20);
 		 targetField = new JTextField("target",20);
+		 treeField = new JTextField(numbTrees.toString(),20);
 		 startButton = new JButton("go");
 		
 		JLabel label = new JLabel("graph");
@@ -60,7 +61,8 @@ protected CollectPoints points = new CollectPoints();
 		entrancePanel.add(sourceField);
 		entrancePanel.add(targetField);
 		entrancePanel.add(startButton);
-	
+		entrancePanel.add(treeField);
+		
 		GridBagConstraints c = new GridBagConstraints();
 		
 		c.gridx =0;

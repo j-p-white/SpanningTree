@@ -72,13 +72,19 @@ public class Prims {
 			String edge = scan.next();
 			String[] pice = edge.split(",");
 			s = new Point(parseTitle(pice[0]),pice[0]);
+
 			if(!treeMap.containsKey(parseTitle(pice[0]))){
+				if(s.title.equals("Pok%C3%A9mon")){
+					s.parent = new Point("root");
+				}
 				t = new Point(parseTitle(pice[1]),pice[1]);
+				t.parent = s;
 				s.myList.add(t);
 				treeMap.put(s.title, s);
 			}
 			else{
 				t = new Point(parseTitle(pice[1]),pice[1]);
+				t.parent = treeMap.get(parseTitle(pice[0]));
 				treeMap.get(parseTitle(pice[0])).myList.add(t);
 			}
 		}
@@ -101,14 +107,15 @@ public class Prims {
 		for(Point p:treeMap.values()){
 			recursivlyGetParent(p);
 		}
+		System.out.println("myTrees: "+myTrees);
 	}
 	
 	private static void recursivlyGetParent(Point myPoint){
-		if(!(myPoint.parent == null)){
+		if(!(myPoint.parent.title.equals("root"))){
 			myPoint = myPoint.parent;
 			recursivlyGetParent(myPoint);
 		}
-		else{
+		else if(myPoint.parent.title.equals("root")){
 			if(!myTrees.contains(myPoint.title)){
 				myTrees.add(myPoint.title);
 			}

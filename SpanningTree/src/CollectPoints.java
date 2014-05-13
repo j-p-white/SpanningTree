@@ -21,7 +21,7 @@ public class CollectPoints {
 		int count = 0;
 		int rotationCount = 0;
 			parent = new Point("Pok%C3%A9mon","http://en.wikipedia.org/wiki/Pok%C3%A9mon");
-			parent.parent = null;
+			parent.parent = new Point("root");
 			populatePoint(parent);
 			while(count <1000){		
 				for(int i =0; i < parent.myList.size();i++){
