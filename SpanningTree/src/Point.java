@@ -10,6 +10,7 @@ public class Point implements Serializable {
 	String title;
 	String url;
 	ArrayList<Point> myList = new ArrayList<Point>();
+	Point parent;
 
 	public Point(String title){
 		this.title = title;
@@ -39,5 +40,9 @@ public class Point implements Serializable {
 		else{
 			return false;
 		}
+	}
+	
+	public Point getParent(){
+		return parent;
 	}
 }

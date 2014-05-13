@@ -29,16 +29,23 @@ protected JButton startButton;
 protected JPanel listPanel,pathpanel;
 protected CollectPoints points = new CollectPoints();
 
+
 	public myPanel() throws IOException, ClassNotFoundException{
 		super(new GridBagLayout());
+		int numbTrees;
 		if(!Prims.myFile.exists()){
 			//make the points
 			points.makePoint();
 			//after the graph is made run prims
-			Prims.makeTree(points.g);	
+			Prims.makeTree(points.g);
+			Prims.connectivityCheck();
+			numbTrees =Prims.myTrees.size();
 		}
 		else{
-			Prims.readPrims();
+			    Prims.readPrims();
+			    Prims.connectivityCheck();
+			    numbTrees = Prims.myTrees.size();
+			
 		}
 		
 		 pathpanel = new JPanel();
@@ -205,7 +212,6 @@ protected CollectPoints points = new CollectPoints();
 		}
 		return false;
 	}
-	
 	
 	private static void createAndShowGUI() throws ClassNotFoundException, IOException {
 		myPanel panel = new myPanel();

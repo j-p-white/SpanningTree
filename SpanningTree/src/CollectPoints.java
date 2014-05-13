@@ -21,6 +21,7 @@ public class CollectPoints {
 		int count = 0;
 		int rotationCount = 0;
 			parent = new Point("Pok%C3%A9mon","http://en.wikipedia.org/wiki/Pok%C3%A9mon");
+			parent.parent = null;
 			populatePoint(parent);
 			while(count <1000){		
 				for(int i =0; i < parent.myList.size();i++){
@@ -39,9 +40,6 @@ public class CollectPoints {
 					}
 				}
 			}
-	//	for(Point p :g.getMapPoints()){
-			
-	//	}
 	}//end method	
 	
 	private void populatePoint(Point parent) throws IOException{
@@ -61,6 +59,7 @@ public class CollectPoints {
 			&& !e.attr("href").contains("//")&& !e.attr("href").contains("#")&& !e.attr("href").contains("Amazon") && e.attr("href").length()>0){
 				
 				p = new Point(parseTitle("http://en.wikipedia.org"+e.attr("href")),"http://en.wikipedia.org"+e.attr("href"));
+				p.parent = parent;
 					parent.myList.add(p);
 					g.addEdges(parent, p, 1);
 				}

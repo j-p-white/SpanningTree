@@ -20,6 +20,7 @@ public class Prims {
 	};
 	static HashMap<String,Point> treeMap= new HashMap<String,Point>();
 	static File myFile = new File("Tree.txt");
+	static ArrayList<String> myTrees = new ArrayList<String>();
 	
 	public static ArrayList<Edge> makeTree(Graph g) throws IOException{
 		PriorityQueue<Edge> pq = new PriorityQueue<Edge>(11,compareEdge);
@@ -92,6 +93,24 @@ public class Prims {
 			else{
 				e.source2.myList.add(e.target2);
 				treeMap.put(e.source2.title, e.source2);
+			}
+		}
+	}
+	
+	public static void connectivityCheck(){
+		for(Point p:treeMap.values()){
+			recursivlyGetParent(p);
+		}
+	}
+	
+	private static void recursivlyGetParent(Point myPoint){
+		if(!(myPoint.parent == null)){
+			myPoint = myPoint.parent;
+			recursivlyGetParent(myPoint);
+		}
+		else{
+			if(!myTrees.contains(myPoint.title)){
+				myTrees.add(myPoint.title);
 			}
 		}
 	}
